@@ -1,0 +1,28 @@
+<div class="ui text container">
+	<h2 style="font-family: 'textileregular'; text-align:center; margin-top:50px">New / Load Game </h2>
+	<table class="ui inverted table">
+		<% if @no_games then %>
+			<p style="text-align:center">
+			You haven't played any previous games... Play a <a href="<%= new_game_path %>">new one</a>?
+			</p>
+		<% else %>
+		  <thead>
+		    <tr>
+		      <th>Game name</th>
+		      <th>Status</th>
+		      <th>Last played</th>
+		    </tr>
+		  </thead>
+		  <tbody>
+		  	<% @games.each do |game| %>
+		    <tr>
+		      <td><a href="<%= game_path(game) %>"><%= game.name %></a></td>
+		      <td><%= game.status %></td>
+		      <td><%= time_ago_in_words game.updated_at %> ago</td>
+		    </tr>
+		    <% end %>
+		  </tbody>
+		  <a href="<%= new_game_path %>" class="ui right aligned inverted button">New game</a>
+		<% end %>
+	</table>
+</div>

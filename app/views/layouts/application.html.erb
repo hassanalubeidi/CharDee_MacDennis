@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ChardeeMacdennis</title>
+    <%= csrf_meta_tags %>
+
+    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.css">
+  	<script
+  src="https://code.jquery.com/jquery-3.2.1.min.js"
+  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+  crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.js"></script>
+  </head>
+
+  <body>
+  	<% unless current_page?(controller: 'title', action: 'index') then %>
+  	<div class="ui container" style="margin-top:25px">
+		<h1 style="font-family: 'textileregular'; text-align:center; margin-top:50px"><a href="/">CharDee MacDennis</a></h1>
+	</div>
+	<% end %>
+    <%= yield %>
+
+  </body>
+  
+</html>

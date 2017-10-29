@@ -1,0 +1,17 @@
+<div class="ui text container">
+	<h2 style="font-family: 'textileregular'; text-align:center; margin-top:50px">New Game </h2>
+	<%= form_for(@game, url: game_index_path, html: { method: :post }) do |f| %>
+	<div class="ui  inverted segment form">
+		<div class="ui field">
+			<label>Game name</label>
+			<%= f.text_field :name %>
+		</div>
+		<%= f.hidden_field :status, value: "Ongoing" %>
+		<div style="text-align:right">
+			
+			<a href="<%= game_index_path %>" class="ui secondary inverted button">Cancel</a>
+			<%= f.submit "Create and play game", class: "ui inverted button" %>
+		</div>
+	</div>
+	<% end %>
+</div>

@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  front: MyText
+  back: MyText
+  card_type: MyString
+  color: MyString
+  wildcard: false
+
+two:
+  front: MyText
+  back: MyText
+  card_type: MyString
+  color: MyString
+  wildcard: false

@@ -1,0 +1,146 @@
+<% unless @game.teams.map {|x| x.level}.include? "win" %>
+<div class="ui container" style="margin-top:25px">
+	<div class="ui inverted segment">
+		<div class="ui two column grid">
+			<% @game.teams.each  do |team| %>
+				<div class="column">
+					<h4>Team <%= team.name %></h4>
+					<h5>Level: <%= team.level %></h5>
+					<img style="margin:auto; text-align:center" class="ui small image" src="<%= drinks_image(team.level) %>"/>
+				</div>
+			<% end %>
+		</div>
+	</div>
+	
+	<% if @game.teams.count < 2 %>
+		<h2>Select your team!</h2>
+		<div class="ui three column centered grid">
+		<% Team.where(game_id: nil).each do |team| %>
+			<% unless @game.teams.map {|x| x.name}.include? team.name %>
+			<div class="column">
+				
+				<a class="ui fluid link card" 
+					href="<%= game_create_team_path({team_id: team.id, game_id: @game.id}) %>" data-method="post">
+					<div class="image">
+				      <img src="<%= image_path(team.image_url) %>">
+				    </div>
+				</a>
+				<h3><%= team.name %></h3>
+			</div>
+			<% end %>
+		<% end %>
+		</div>
+	<% else %>
+		<!-- Game starts! -->
+		<% @card = @game.current_player.pickup_card %>
+		<h2>Current player is: <%= @game.current_player.name %>, of team <%= @game.current_team.name %></h2>
+		<div style="text-align:center; margin:auto;">
+			<div class="ui shape">
+			  <div class="sides">
+			    <div class="active side">
+					<div class="ui card">
+					    <div class="content">
+							<div class="header"><%= @card.card_type %></div>
+							<div class="description">
+								<%= @card.front %>
+							</div>
+
+					    </div>
+					    <% if @card.back %>
+							<div class="ui bottom attached button flip-button">
+						      Flip over
+						    </div>
+						    <% end %>
+					</div>
+				</div>
+				<div class="side">
+					<div class="ui card">
+					    <div class="content">
+							<div class="header"><%= @card.card_type %>: Answer</div>
+							<div class="description">
+								<%= @card.back %>
+							</div>
+					    </div>
+					</div>
+				</div>
+			</div>
+			</div>
+
+		</div>
+		<div style="text-align:center; margin-top:25px">
+		<% if @card.card_type == "Trivia" %>
+			<div style="text-align:center; margin-top:25px">
+				<div class="trivia-actions">
+					<a href="<%= collect_card_path({card: @card, current_player: @game.current_player}) %>" class="ui green button" data-method="post">Correct</a>
+					<a class="ui red button" href="<%= end_turn_path({game: @game}) %>" data-method="post">Incorrect</a>
+				</div>
+			</div>
+		<% elsif @card.front.gsub(/All Play/).count > 0 %>
+			<div style="text-align:center; margin-top:25px">
+			<% @game.teams.each do |team| %>
+				<a href="<%= collect_card_path({card: @card, current_player: team.players.first}) %>"
+				   class="ui button"
+				   data-method="post"><%= team.name %></a>
+			<% end %>
+			</div>
+		<% elsif @card.front.match(/\w minutes/)  %>
+			<% minutes = @card.front.match(/\w minutes/)[0].match(/\w/)[0] %>
+			This is a timed one!
+			<span id="time">0<%= minutes %>:00</span> remaining!
+			<script>
+			function startTimer(duration, display) {
+			    var timer = duration, minutes, seconds;
+			    setInterval(function () {
+			        minutes = parseInt(timer / 60, 10);
+			        seconds = parseInt(timer % 60, 10);
+
+			        minutes = minutes < 10 ? "0" + minutes : minutes;
+			        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+			        display.text(minutes + ":" + seconds);
+			        if( (minutes + ":" + seconds) == "0:00") {
+			        	console.log("IM SO DONE")
+			        	break;
+			        }
+			        if (--timer < 0) {
+			            timer = duration;
+			        }
+			    }, 1000);
+			}
+
+			jQuery(function ($) {
+			        display = $('#time');
+			    startTimer(60 * <%= minutes %>, display);
+			});
+			</script>
+		<% else %>
+			<div style="text-align:center; margin-top:25px">
+				<div>
+					<a href="<%= collect_card_path({card: @card, current_player: @game.current_player}) %>" class="ui green button" data-method="post">Correct</a>
+					<a class="ui red button" href="<%= end_turn_path({game: @game}) %>" data-method="post">Incorrect</a>
+				</div>
+			</div>
+		<% end %>
+		</div>
+		
+	<% end %>
+</div>
+<script>
+$(document).ready( () => {
+$(".flip-button").on("click", () => {
+	$('.shape').shape('flip over');
+	$('.trivia-actions').css("display", "inline-block")
+})
+})
+</script>
+<style>
+ .trivia-actions {
+ 	margin:auto !important;
+ 	text-align:center !important;
+ 	white-space: nowrap;
+ 	display:none;
+ }
+</style>
+<% else %>
+	<h1>Team <%= @game.teams.select {|x| x.level == "win"}.first.name %> Wins!</h1>
+<% end %>

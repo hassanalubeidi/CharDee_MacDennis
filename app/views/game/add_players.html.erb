@@ -1,0 +1,37 @@
+<div class="ui container" style="margin-top:25px">
+	<h2><%= @team.name %><h1>
+
+	<h3>Add players:</h3>
+	<div class="ui six column centered grid">
+	<% Player.where(team_id: nil, team_name: @team.name).each do |player| %>
+		<% unless @team.players.map {|x| x.name}.include? player.name %>
+		<div class="column">
+			<a class="ui fluid link card" 
+				href="<%= game_create_player_path({team_id: @team.id, player_id: player.id, game_id: @team.game_id}) %>" data-method="post">
+				<div class="image">
+			      <img src="<%= image_path(player.image_url) %>">
+			    </div>
+			</a>
+			<h3><%= player.name %></h3>
+		</div>
+		<% end %>
+	<% end %>
+	</div>
+	<% if @team.players.count > 0 then %>
+		<h3>Current Players:</h3>
+		<div class="ui six column centered grid">
+		<% @team.players.each do |player| %>
+			<div class="column">
+				<div class="ui fluid link card">
+					<div class="image">
+				      <img src="<%= image_path(player.image_url) %>">
+				    </div>
+				</div>
+				<h3><%= player.name %></h3>
+			</div>
+		<% end %>
+		</div>
+		<a style="margin-top:50px" class="ui inverted fluid button" href="<%= game_path(Game.find(@team.game_id)) %>">Done</a>
+	<% end %>
+	</div>
+</div>
